@@ -24,7 +24,7 @@
  * Text Domain:       featured_image_url
  */
 
-add_action( 'init', 'rest_api_featured_images_urls_init', 12 );
+add_action('init', 'rest_api_featured_images_urls_init');
 
 /**
  * Register the featured_image_url field to all public post types
@@ -34,13 +34,13 @@ add_action( 'init', 'rest_api_featured_images_urls_init', 12 );
  */
 function rest_api_featured_images_urls_init() {
 
-	$post_types = get_post_types(array('public' => true ), 'objects');
+	$post_types = get_post_types(array('public' => true), 'objects');
 
-	foreach ( $post_types as $post_type ) {
+	foreach ($post_types as $post_type) {
 
 		$post_type_name = $post_type->name;
-		$show_in_rest = isset( $post_type->show_in_rest) && $post_type->show_in_rest) ? true : false;
-		$supports_thumbnail = post_type_supports( $post_type_name, 'thumbnail' );
+		$show_in_rest = (isset($post_type->show_in_rest) && $post_type->show_in_rest) ? true : false;
+		$supports_thumbnail = post_type_supports($post_type_name, 'thumbnail');
 
 		// Only proceed if the post type is set to be accessible over the REST API
 		// and supports featured images.
@@ -70,11 +70,11 @@ function rest_api_featured_images_urls_init() {
 function rest_api_featured_images_urls_get_field($object, $field_name, $request) {
 
 	// Only proceed if the post has a featured image.
-	if (!empty($object['featured_media'])) {
-		$image_id = (int)$object['featured_media'];
-	} else {
+	if (empty($object['featured_media'])) {
 		return null;
 	}
+
+	$image_id = (int) $object['featured_media'];
 
 	$image = get_post($image_id);
 
@@ -82,5 +82,5 @@ function rest_api_featured_images_urls_get_field($object, $field_name, $request)
 		return null;
 	}
 
-	return apply_filters('rest_api_featured_image_url', wp_get_attachment_url( $image_id ), $image_id);
+	return apply_filters('rest_api_featured_image_url', wp_get_attachment_url($image_id), $image_id);
 }
